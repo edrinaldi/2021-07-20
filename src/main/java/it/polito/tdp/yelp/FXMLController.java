@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.yelp.model.Model;
+import it.polito.tdp.yelp.model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -38,13 +39,13 @@ public class FXMLController {
     private TextField txtX2; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbAnno"
-    private ComboBox<?> cmbAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> cmbAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtN"
     private TextField txtN; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbUtente"
-    private ComboBox<?> cmbUtente; // Value injected by FXMLLoader
+    private ComboBox<User> cmbUtente; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtX1"
     private TextField txtX1; // Value injected by FXMLLoader
@@ -54,7 +55,24 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	try {
+        	int n = Integer.parseInt(this.txtN.getText());
+        	Integer anno = this.cmbAnno.getValue();
+        	if(anno == null) {
+        		this.txtResult.appendText("Inserire un valore numerico per l'anno.");
+        		return;
+        	}
+        	String msg = this.model.creaGrafo(n, anno);
+        	this.txtResult.appendText(msg);
+        	this.cmbUtente.getItems().clear();
+        	this.cmbUtente.getItems().addAll(this.model.getUsers());
+    	}
+    	catch(NumberFormatException e) {
+    		e.printStackTrace();
+    		this.txtResult.appendText("Inserire un valore numerico per n.");
+    		return;
+    	}
     }
 
     @FXML
@@ -84,5 +102,8 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	for(int i=2005;i<=2013;i++) {
+    		this.cmbAnno.getItems().add(i);
+    	}
     }
 }
