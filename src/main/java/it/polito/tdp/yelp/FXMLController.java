@@ -5,6 +5,7 @@
 package it.polito.tdp.yelp;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.yelp.model.Model;
@@ -77,7 +78,14 @@ public class FXMLController {
 
     @FXML
     void doUtenteSimile(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	User utente = this.cmbUtente.getValue();
+    	List<User> simili = this.model.getUtentiSimili(utente);
+		this.txtResult.appendText("Utenti piu' simili a " + utente.toString() +
+				":\n\n");
+    	for(User u : simili) {
+    		this.txtResult.appendText(u.toString() + "\n");
+    	}
     }
     
     @FXML

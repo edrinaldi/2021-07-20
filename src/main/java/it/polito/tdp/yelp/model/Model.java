@@ -1,5 +1,6 @@
 package it.polito.tdp.yelp.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jgrapht.Graph;
@@ -20,6 +21,7 @@ public class Model {
 	}
 	
 	public String creaGrafo(int minRevisioni, int anno) {
+		double start = System.currentTimeMillis();	// tempo
 		this.grafo = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 		this.utenti = this.dao.getUsersWithReviews(minRevisioni);
 		Graphs.addAllVertices(this.grafo, this.utenti);
@@ -36,7 +38,9 @@ public class Model {
 				}
 			}
 		}
-		
+		double end = System.currentTimeMillis();	// tempo
+		System.out.format("Tempo impiegato: %.2fs\n", (end-start)/1000);	// tempo
+
 		System.out.format("# vertici: %d\n", this.grafo.vertexSet().size());
 		System.out.format("# archi: %d\n", this.grafo.edgeSet().size());
 		return String.format("Creato grafo con %d vertici e %d archi", 
@@ -45,6 +49,28 @@ public class Model {
 	
 	public List<User> getUsers() {
 		return this.utenti;
+	}
+	
+	public List<User> getUtentiSimili(User utente) {
+		List<User> simili = new ArrayList<>();
+		int pMax = 0;
+		List<User> vicini = Graphs.neighborListOf(this.grafo, utente);
+		for(DefaultWeightedEdge e : this.grafo.edgesOf(utente)) {
+			// ho un arco
+			int peso = (int)this.grafo.getEdgeWeight(e);
+			if(peso > pMax) {
+				pMax = peso;
+			}
+		}
+		for(DefaultWeightedEdge e : this.grafo.edgesOf(utente)) {
+			int peso = (int)this.grafo.getEdgeWeight(e);
+			if(peso == pMax) {
+				User u2 = Graphs.getOppositeVertex(this.grafo, e, utente);
+				simili.add(u2);
+			}
+		}
+		System.out.println("Lista dei simili: " + simili);
+		return simili;
 	}
 	
 }
