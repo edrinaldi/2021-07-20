@@ -64,8 +64,11 @@ public class FXMLController {
     			txtResult.setText("Devi selezioare un anno valido\n");
     			return;
     		}
-    		
+    		double start = System.currentTimeMillis();
     		String msg = model.creaGrafo(minReview, anno);
+    		double end = System.currentTimeMillis();
+    		System.out.format("Tempo impiegato per creare il grafo: %.3fs", 
+    				(end-start)/1000);
     		txtResult.setText(msg);
     		cmbUtente.getItems().clear();
     		cmbUtente.getItems().addAll(model.getUsers());
